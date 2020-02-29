@@ -9,6 +9,7 @@ const CoffeeStateContext = createContext()
 const CoffeeDispatchContext = createContext()
 
 // A single provider which actually gives access to both our state and dispatch contexts.
+// Props other than children can be those returned from the page's getInitialProps.
 export const CoffeeContextProvider = ({ children, coffeeShops }) => {
   const initFunction = () => ({ ...initialState, coffeeShops })
   const [state, dispatch] = useReducer(
@@ -41,3 +42,25 @@ export const useCoffeeContext = () => {
     state,
   }
 }
+
+// Could also do something like this.
+// export const useCoffeeContext = (
+//   takeState = state => state,
+//   takeActions = actions => actions
+// ) => {
+//   const [state, dispatch] = [
+//     useContext(CoffeeStateContext),
+//     useContext(CoffeeDispatchContext),
+//   ]
+
+//   const takenState = takeState(state)
+//   const takenActions = takeActions(actionCreators)
+
+//   // Wrap each action creator with dispatch.
+//   const actionsWithDispatch = bindActionCreators(takenActions, dispatch)
+
+//   return {
+//     ...actionsWithDispatch,
+//     ...takenState,
+//   }
+// }

@@ -1,30 +1,77 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/zeit/next.js/tree/canary/packages/create-next-app).
+# next-state-manager example app
 
-## Getting Started
+## What is it?
 
-First, run the development server:
+This is not (yet) a library. It's a state management pattern for NextJS; it uses mutliple stores and is built on the React Context API.
 
-```bash
-npm run dev
-# or
-yarn dev
+## Why for NextJS?
+
+Whilst this pattern can be used in any React application, it works particularly well with NextJS because:
+
+1. Often there is no need to share state between pages\* in NextJS, and so it makes sense to give each page its own store
+2. The props returned from a page's `getInitialProps` method (for example data fetched from an API) can easily be injected into the store for the given page
+
+\*pages meaning each component within the pages directory, i.e. a route of the application
+
+## Architecture
+
+<img width="450" alt="portfolio_view" src="./next-state-image.png">
+
+Most of the logic lives in the Context Provider function where the props from `getInitialProps` are merged into the initial state:
+
+```
+const ContextProvider = ({ children, initialProps }) => {
+  const initFunction = () => ({ ...initialState, ...initialProps })
+  const [state, dispatch] = useReducer(
+    coffeePageReducer,
+    initialState,
+    initFunction
+  )
+
+  return (
+    <StateContext.Provider value={state}>
+      <DispatchContext.Provider value={dispatch}>
+        {children}
+      </DispatchContext.Provider>
+    </StateContext.Provider>
+  )
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## What patterns are used?
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+- Actions & reducers with the `useReducer` hook
+- [Immer](https://github.com/immerjs/immer) for immutable state updates
+- Action creators; these automatically get wrapped with `dispatch` so you can use these rather than dispatching directly from in the component
 
-## Learn More
+## What is it missing?
 
-To learn more about Next.js, take a look at the following resources:
+Comparing to Redux is the easiest way to explain what's missing. Redux is optimized to reduce unecessary re-renders of components connected to the store - the component will only update if the _specific part of the state_ that it cares about has changed, where this part of state is defined by `mapStateToProps`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The Context API does not offer this choice to re-render for only some state updates; if any part of a Provider's context value changes, then all Consumers of this context will update. [See this RFC](https://github.com/reactjs/rfcs/pull/119) for some proposed solutions.
 
-You can check out [the Next.js GitHub repository](https://github.com/zeit/next.js/) - your feedback and contributions are welcome!
+However, this state architecture is based on having multiple stores meaning that each store should be _relatively_ small which would reduce the extent of this unecessary re-rendering.
 
-## Deploy on ZEIT Now
+## TODO
 
-The easiest way to deploy your Next.js app is to use the [ZEIT Now Platform](https://zeit.co/) from the creators of Next.js.
+Need to consider which is the preferrable way to bring pieces of state and/or certain actions into a component.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+For example, if you need the list of coffee shops and the action to mark one as visited. The most simple solution is to destructure the specific state and action on the way in:
+
+```
+const {
+  state: { coffeeShops },
+  actions: { toggleVisitedShop },
+} = useCoffeeContext()
+```
+
+however we could implement a Redux-like `mapStateToProps` and `mapDispatchToProps`. Let's call them `takeState` and `takeActions`:
+
+```
+const takeState = state => ({ state: state.coffeeShops })
+const takeActions = actions => ({ toggleVisitedShop: actions.toggleVisitedShop })
+
+const { coffeeShops, toggleVisitedShop } = useCoffeeContext(takeState, takeActions)
+```
+
+Note that this latter method does not provide the same optimizations as Redux (see section above), it is simply an alternative way of specifiying which parts of Context will be used in the component.
