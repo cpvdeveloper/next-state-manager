@@ -8,8 +8,21 @@
     "start": "next start"
   },
   "dependencies": {
+    "immer": "^5.3.6",
     "next": "9.2.2",
     "react": "16.13.0",
-    "react-dom": "16.13.0"
+    "react-dom": "16.13.0",
+    "styled-components": "^5.0.1"
+  },
+  "devDependencies": {
+    "babel-plugin-styled-components": "^1.10.7",
+    "husky": "^4.2.3",
+    "prettier": "^1.19.1",
+    "pretty-quick": "^2.0.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
   }
 }
