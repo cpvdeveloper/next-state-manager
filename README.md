@@ -52,11 +52,13 @@ The Context API does not offer this choice to re-render for only some state upda
 
 However, this state architecture is based on having multiple stores meaning that each store should be _relatively_ small which would reduce the extent of this unecessary re-rendering.
 
-## TODO
+## Three ways to 'use' context
 
 Need to consider which is the preferrable way to bring pieces of state and/or certain actions into a component.
 
-For example, if you need the list of coffee shops and the action to mark one as visited. The most simple solution is to destructure the specific state and action on the way in:
+For example, if you need the list of coffee shops and the action to mark one as visited.
+
+1. Destructure the specific state and action on the way in:
 
 ```
 const {
@@ -65,13 +67,25 @@ const {
 } = useCoffeeContext()
 ```
 
-however we could implement a Redux-like `mapStateToProps` and `mapDispatchToProps`. Let's call them `takeState` and `takeActions`:
+2. Redux-like `mapStateToProps` and `mapDispatchToProps` as arguments to our `useCoffeeContext` hook. Let's call them `takeState` and `takeActions`:
 
 ```
-const takeState = state => ({ state: state.coffeeShops })
+const takeState = state => ({ coffeeShops: state.coffeeShops })
 const takeActions = actions => ({ toggleVisitedShop: actions.toggleVisitedShop })
 
 const { coffeeShops, toggleVisitedShop } = useCoffeeContext(takeState, takeActions)
 ```
 
-Note that this latter method does not provide the same optimizations as Redux (see section above), it is simply an alternative way of specifiying which parts of Context will be used in the component.
+3. Go full-Redux and make our useContext a higher-order component:
+
+```
+import { toggleVisitedShop } from './actions'
+...
+const takeState = state => ({ coffeeShops: state.coffeeShops })
+const takeActions = { toggleVisitedShop }
+...
+
+export default withCoffeeContext(takeState, takeActions)(CoffeeList)
+```
+
+Note that even though options 2 and 3 look a bit like Redux, they do not provide the same optimizations (see section above).

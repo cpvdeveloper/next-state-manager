@@ -1,13 +1,20 @@
 import React from 'react'
 import styled from 'styled-components'
-import { useCoffeeContext } from './context'
+import { actionCreators } from './context/reducer'
+import { useContextHoc } from './context'
 
 const StyledListItem = styled.li``
 
-const CoffeeListItem = ({ id, name, location, isVisited }) => {
-  const {
-    actions: { toggleVisitedShop },
-  } = useCoffeeContext()
+const CoffeeListItem = ({
+  id,
+  name,
+  location,
+  isVisited,
+  toggleVisitedShop,
+}) => {
+  // const {
+  //   actions: { toggleVisitedShop },
+  // } = useCoffeeContext()
 
   const handleToggleVisited = () => {
     toggleVisitedShop(id, !isVisited)
@@ -27,4 +34,8 @@ const CoffeeListItem = ({ id, name, location, isVisited }) => {
   )
 }
 
-export default CoffeeListItem
+const takeActions = {
+  toggleVisitedShop: actionCreators.toggleVisitedShop,
+}
+
+export default useContextHoc(null, takeActions)(CoffeeListItem)

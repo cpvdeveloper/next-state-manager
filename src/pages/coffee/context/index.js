@@ -44,10 +44,7 @@ export const useCoffeeContext = () => {
 }
 
 // Could also do something like this.
-// export const useCoffeeContext = (
-//   takeState = state => state,
-//   takeActions = actions => actions
-// ) => {
+// export const useCoffeeContext = (takeState, takeActions) => {
 //   const [state, dispatch] = [
 //     useContext(CoffeeStateContext),
 //     useContext(CoffeeDispatchContext),
@@ -64,3 +61,34 @@ export const useCoffeeContext = () => {
 //     ...takenState,
 //   }
 // }
+
+export const useContextHoc = (
+  takeState,
+  takeActions = null,
+  includeDispatch = false
+) => Component => otherProps => {
+  const [state, dispatch] = [
+    useContext(CoffeeStateContext),
+    useContext(CoffeeDispatchContext),
+  ]
+
+  const takenState = typeof takeState === 'function' ? takeState(state) : {}
+
+  const takenActions =
+    typeof takeActions === 'function'
+      ? takeActions(actionCreators)
+      : typeof takeActions === 'object'
+      ? takeActions
+      : {}
+
+  const takenActionsWithDispatch = bindActionCreators(takenActions, dispatch)
+
+  const props = {
+    ...takenState,
+    ...takenActionsWithDispatch,
+    ...otherProps,
+    dispatch: includeDispatch ? dispatch : undefined,
+  }
+
+  return <Component {...props} />
+}
