@@ -17,6 +17,12 @@ const bindActionCreator = (actionCreator, dispatch) => (...args) =>
 export const bindActionCreators = (actionCreators, dispatch) =>
   Object.keys(actionCreators).reduce((acc, curr) => {
     const actionCreator = actionCreators[curr]
-    acc[curr] = bindActionCreator(actionCreator, dispatch)
+    if (typeof actionCreator === 'function') {
+      acc[curr] = bindActionCreator(actionCreator, dispatch)
+    } else {
+      throw new Error(
+        `Action creators must be functions, you passed one which is: ${typeof actionCreator}`
+      )
+    }
     return acc
   }, {})
