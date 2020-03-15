@@ -1,6 +1,7 @@
 import React, { createContext, useReducer, useContext } from 'react'
 import { bindActionCreators } from '../../../context/utils'
-import { actionCreators, coffeePageReducer, initialState } from './reducer'
+import { coffeePageReducer, initialState } from './reducer'
+import { actionCreators } from './actions'
 
 // Create a separate context for state and dispatch.
 // This gives better performance rather than having a single provider with a value

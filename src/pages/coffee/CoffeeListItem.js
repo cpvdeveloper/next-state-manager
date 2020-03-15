@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { actionCreators } from './context/reducer'
+import { actionCreators } from './context/actions'
 import { useContextHoc } from './context'
 
 const StyledListItem = styled.li``

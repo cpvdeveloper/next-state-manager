@@ -4,6 +4,7 @@ import { actionTypes } from './actionTypes'
 const initialState = {
   isModalOpen: false,
   coffeeShops: [],
+  count: 0,
 }
 
 // Define how the state should update for each actionType.
@@ -17,24 +18,10 @@ const actionsHandlers = {
     const { shopId, isVisited } = action.payload
     draft.coffeeShops[shopId].isVisited = isVisited
   }),
-}
 
-// Define the allowed actions so that we don't have to use dispatch directly in components.
-const actionCreators = {
-  openModal: () => ({
-    type: actionTypes.TOGGLE_MODAL,
-    payload: true,
-  }),
-  closeModal: () => ({
-    type: actionTypes.TOGGLE_MODAL,
-    payload: false,
-  }),
-  toggleVisitedShop: (shopId, isVisited) => ({
-    type: actionTypes.TOGGLE_VISITED_SHOP,
-    payload: {
-      shopId,
-      isVisited,
-    },
+  [actionTypes.INCREMENT]: state => ({
+    ...state,
+    count: state.count + 1,
   }),
 }
 
@@ -44,4 +31,4 @@ const coffeePageReducer = (state = initialState, action) =>
     ? actionsHandlers[action.type](state, action)
     : state
 
-export { initialState, actionCreators, coffeePageReducer }
+export { initialState, coffeePageReducer }
