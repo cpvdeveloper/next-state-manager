@@ -19,8 +19,4 @@ export const actionCreators = {
       isVisited,
     },
   }),
-
-  increment: () => ({
-    type: actionTypes.INCREMENT,
-  }),
 }

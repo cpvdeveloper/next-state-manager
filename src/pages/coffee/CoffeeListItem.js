@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { actionCreators } from './context/actions'
+import { allActionCreators } from './context/actions'
 import { useContextHoc } from './context'
 
 const StyledListItem = styled.li``
@@ -35,7 +35,7 @@ const CoffeeListItem = ({
 }
 
 const takeActions = {
-  toggleVisitedShop: actionCreators.toggleVisitedShop,
+  toggleVisitedShop: allActionCreators.toggleVisitedShop,
 }
 
 export default useContextHoc(null, takeActions)(CoffeeListItem)
