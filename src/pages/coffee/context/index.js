@@ -1,7 +1,7 @@
 import React, { createContext, useReducer, useContext } from 'react'
 import { bindActionCreators } from '../../../context/utils'
 import { coffeePageReducer, initialState } from './reducer'
-import { actionCreators } from './actions'
+import { allActionCreators } from './actions'
 
 // Create a separate context for state and dispatch.
 // This gives better performance rather than having a single provider with a value
@@ -36,7 +36,7 @@ export const useCoffeeContext = () => {
   ]
 
   // Wrap each action creator with dispatch.
-  const actionsWithDispatch = bindActionCreators(actionCreators, dispatch)
+  const actionsWithDispatch = bindActionCreators(allActionCreators, dispatch)
 
   return {
     actions: actionsWithDispatch,
@@ -77,7 +77,7 @@ export const useContextHoc = (
 
   const takenActions =
     typeof takeActions === 'function'
-      ? takeActions(actionCreators)
+      ? takeActions(allActionCreators)
       : typeof takeActions === 'object'
       ? takeActions
       : {}
