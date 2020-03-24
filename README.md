@@ -88,4 +88,6 @@ const takeActions = { toggleVisitedShop }
 export default withCoffeeContext(takeState, takeActions)(CoffeeList)
 ```
 
+What I like most about this is that the actions/state are injected as props meaning they can be defined in `propTypes`.
+
 Note that even though options 2 and 3 look a bit like Redux, they do not provide the same optimizations (see section above).
